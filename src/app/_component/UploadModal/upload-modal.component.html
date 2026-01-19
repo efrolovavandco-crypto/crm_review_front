@@ -1,0 +1,56 @@
+<div *ngIf="isOpen" class="modal-backdrop fade show"></div>
+<div class="modal fade show d-block" *ngIf="isOpen" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered" *ngIf="isOpen">
+    <div class="modal-content">
+      <div class="modal-header bg-secondary text-white">
+        <h5 class="modal-title">Выгрузка пользователей</h5>
+        <button type="button" class="btn-close btn-close-white" (click)="close()"></button>
+      </div>
+      <form [formGroup]="uploadFormGroup" (ngSubmit)="submit()">
+        <div class="modal-body">
+          <p>Выберите необходимые поля:</p>
+          <div class="mb-4">
+            <div class="form-check">
+              <input class="form-check-input" type="checkbox" id="column1" formControlName="id">
+              <label class="form-check-label" for="column1">ID</label>
+            </div>
+            <div class="form-check">
+              <input class="form-check-input" type="checkbox" id="column2" formControlName="fullname">
+              <label class="form-check-label" for="column2">ФИО</label>
+            </div>
+            <div class="form-check">
+              <input class="form-check-input" type="checkbox" id="column3" formControlName="phone">
+              <label class="form-check-label" for="column3">Телефон</label>
+            </div>
+            <div class="form-check">
+              <input class="form-check-input" type="checkbox" id="column4" formControlName="age">
+              <label class="form-check-label" for="column4">Возраст</label>
+            </div>
+            <div class="form-check">
+              <input class="form-check-input" type="checkbox" id="column5" formControlName="gender">
+              <label class="form-check-label" for="column5">Пол</label>
+            </div>
+            <div class="form-check">
+              <input class="form-check-input" type="checkbox" id="column6" formControlName="position">
+              <label class="form-check-label" for="column6">Должность</label>
+            </div>
+          </div>
+
+          <p>Выберите формат выгрузки:</p>
+          <div class="d-flex gap-3 mb-3">
+            <button type="button" class="btn btn-outline-secondary" [class.active]="format==='PDF'" (click)="setFormat('PDF')">
+              PDF
+            </button>
+            <button type="button" class="btn btn-outline-secondary" [class.active]="format==='HTML'" (click)="setFormat('HTML')">
+              HTML
+            </button>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" (click)="close()">Отмена</button>
+          <button type="submit" class="btn btn-danger">Начать загрузку</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

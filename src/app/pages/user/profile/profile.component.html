@@ -1,0 +1,12 @@
+<div class="container pt-5" *ngIf="user$ | async as user">
+  <h4 class="text-primary">Персональные данные</h4><br>
+
+  <p><b>ФИО:</b> {{ user.fullname ||"Не указано"}}</p>
+  <p><b>Телефон:</b> {{ user.phone ||"Не указано"}}</p>
+  <p><b>Возраст:</b> {{ user.age ||"Не указано"}}</p>
+  <p><b>Пол:</b> {{ getGenderText(user.gender) }}</p>
+  <p><b>Должность:</b> {{getPositionText( user.position )}}</p>
+
+  <button class="btn btn-primary" (click)="openEditProfile(user)">Редактировать</button>
+</div>
+<app-edit-profile></app-edit-profile>
