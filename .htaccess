@@ -1,0 +1,9 @@
+RewriteEngine On
+
+# Запрещаем доступ к системным папкам
+RewriteRule ^(vendor|runtime|config|tests)/ - [F,L]
+RewriteRule ^(composer\.(json|lock)|yii|yii_test) - [F,L]
+
+# Все запросы перенаправляем в папку web/
+RewriteCond %{REQUEST_URI} !^/web/
+RewriteRule ^(.*)$ /web/$1 [L]
