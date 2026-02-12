@@ -2,7 +2,7 @@
   <div class="d-flex justify-content-between align-items-center mb-4">
     <h4>Админ-Панель</h4>
     <div>
-      <button class="btn btn-primary me-2 disabled" >Опросы</button>
+      <button class="btn btn-primary me-2" (click)="openPolls()">Опросы</button>
       <button class="btn btn-secondary me-2" (click)="openUploadModal()">Выгрузка (PDF/HTML)</button>
       <button class="btn btn-success me-2" (click)="openCreateModal()">Добавить пользователя</button>
       <button class="btn btn-danger" (click)="logout()">Выйти</button>
@@ -10,6 +10,6 @@
   </div>
   <app-table></app-table>
 </div>
-<!-- Модальные окна в шапке админки-->
-<app-create-modal></app-create-modal>
-<app-upload-modal></app-upload-modal>
+
+
+<router-outlet></router-outlet>

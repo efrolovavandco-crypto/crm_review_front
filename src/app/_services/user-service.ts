@@ -17,7 +17,9 @@ export class UserService {
     this.http.get<User[]>('/user').subscribe(users => this.usersSubject.next(users));
   }
   getAll(): Observable<User[]> {
-    return this.http.get<User[]>(`${environment.apiUrl}/user`);
+    return this.http.get<User[]>(`${environment.apiUrl}/user`).pipe(
+      tap(users=>this.usersSubject.next(users))
+    );
   }
   create(user: User): Observable<User> {
     return this.http.post<User>(`${environment.apiUrl}/user`, user).pipe(

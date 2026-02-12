@@ -1,0 +1,70 @@
+<div class="modal-header bg-success text-white">
+  <h5 class="modal-title">Добавить пользователя</h5>
+  <button type="button"
+          class="btn-close btn-close-white"
+          (click)="activeModal.dismiss()">
+  </button>
+</div>
+<form [formGroup]="addForm" (ngSubmit)="addUser()">
+  <div class="modal-body">
+    <div class="mb-3">
+      <label>ФИО</label>
+      <input class="form-control mb-2" formControlName="fullname"/>
+      <div *ngIf="fullname?.invalid && (fullname?.dirty || fullname?.touched)" class="alert alert-danger">
+        <div *ngIf="fullname?.errors?.['onlyDigits']">
+          {{ fullname?.errors?.['onlyDigits'] }}
+        </div>
+      </div>
+    </div>
+    <div class="mb-3">
+      <label>Телефон</label>
+      <input class="form-control mb-2" formControlName="phone"/>
+      <div *ngIf="phone?.invalid && (phone?.dirty || phone?.touched)" class="alert alert-danger ">
+        <div *ngIf="phone?.errors?.['onlyDigits']">
+          {{ phone?.errors?.['onlyDigits'] }}
+        </div>
+      </div>
+    </div>
+    <div class="mb-3">
+      <label>Возраст</label>
+      <input type="number" class="form-control" formControlName="age"/>
+      <div *ngIf="age?.invalid && (age?.dirty || age?.touched)" class="alert alert-danger ">
+        <div *ngIf="age?.errors?.['onlyDigits']">
+          {{ age?.errors?.['onlyDigits'] }}
+        </div>
+      </div>
+    </div>
+    <!-- Пол -->
+    <div class="mb-3">
+      <label>Пол</label>
+      <select class="form-control" formControlName="gender">
+        <option value="" disabled>Выберите пол</option>
+        <option value="male">Мужской</option>
+        <option value="female">Женский</option>
+      </select>
+    </div>
+    <!-- Должность -->
+    <div class="mb-3">
+      <label>Должность <span class="text-danger">*</span></label>
+      <select class="form-control"
+              formControlName="position">
+        <option value="" disabled>Выберите должность</option>
+        <option *ngFor="let p of positions"
+                [value]="p.value">
+          {{ p.label }}
+        </option>
+      </select>
+      <div class="invalid-feedback" *ngIf="isInvalid('position')">
+        Выберите должность
+      </div>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-secondary" (click)="activeModal.dismiss()">
+      Отмена
+    </button>
+    <button type="submit" class="btn btn-success" [disabled]="addForm.invalid">
+      Добавить
+    </button>
+  </div>
+</form>

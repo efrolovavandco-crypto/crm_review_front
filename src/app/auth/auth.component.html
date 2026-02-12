@@ -27,9 +27,9 @@
           <span *ngIf="!loading">Войти</span>
           <span *ngIf="loading">Загрузка...</span>
         </button>
-        <div *ngIf="f['password'].errors?.['englishLettersOnly'] && (f['password'].dirty || f['password'].touched)"
+        <div *ngIf="f['password'].errors?.['passwordValid'] && (f['password'].dirty || f['password'].touched)"
              class="alert alert-danger mt-3">
-          <div *ngIf="f['password'].errors?.['englishLettersOnly'] && (f['password'].dirty || f['password'].touched)">
+          <div *ngIf="f['password'].errors?.['passwordValid'] && (f['password'].dirty || f['password'].touched)">
             Пароль должен содержать только английские буквы
           </div>
         </div>

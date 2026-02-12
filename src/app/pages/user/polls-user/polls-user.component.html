@@ -1,0 +1,63 @@
+<div class="container pt-5">
+  <h4 class="text-primary">Доступные опросы</h4><br>
+  <div class="row" >
+    <div class="col-12">
+      <div class="row">
+        <div class="col-md-4 col-sm-6 mb-4" *ngFor="let poll of polls; let i = index">
+          <div class="card h-100">
+            <div class="card-body d-flex flex-column">
+              <div class="d-flex justify-content-between align-items-center">
+                <h5 class="card-title">Название: {{poll.title}}</h5>
+                <span class="badge" [ngClass]="getBadgeClass(poll.id)">
+                  {{ getBadgeText(poll.id) }}
+                </span>
+              </div>
+              <p class="card-text">Опрос ID: {{poll.id}}</p>
+              <p class="card-text">Количество вопросов: {{poll.questions?.length || 0}}</p>
+
+              <div *ngIf="isPollCompleted(poll.id)" class="mb-3">
+                <div class="alert alert-info p-2">
+                  <small>
+                    <strong>Результат:</strong>
+                    {{ getPollResult(poll.id)?.correct_answers_count }}/{{ getPollResult(poll.id)?.total_questions }}
+                    правильных ответов
+                  </small>
+                </div>
+              </div>
+
+              <div class="mt-auto">
+                <button
+                  *ngIf="!isPollCompleted(poll.id)"
+                  class="btn btn-primary me-2"
+                  (click)="startPoll(poll)">
+                  Пройти
+                </button>
+
+                <button
+                  class="btn btn-outline-primary me-2"
+                  (click)="restartPoll(poll)"
+                  *ngIf="isPollCompleted(poll.id)">
+                  Пройти заново
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <ng-template #loading>
+    <div class="text-center py-5">
+      <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Загрузка...</span>
+      </div>
+      <p class="mt-3">Загрузка опросов...</p>
+    </div>
+  </ng-template>
+
+  <!-- сли нет опросов -->
+  <div *ngIf="polls.length === 0 && !isLoading" class="text-center py-5">
+    <p class="text-muted">Нет доступных опросов</p>
+  </div>
+</div>

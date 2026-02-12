@@ -3,19 +3,22 @@ import { CommonModule } from '@angular/common';
 import {RouterModule, Routes} from "@angular/router";
 import {AdminComponent} from "./admin.component";
 import {TableComponent} from "./table/table.component";
-import {CreateModalModule} from "../../_component/CreateModal/create-modal.module";
-import {UploadModalModule} from "../../_component/UploadModal/upload-modal.module";
+import {CreateModalModule} from "../../_component/create-modal/create-modal.module";
+import {UploadModalModule} from "../../_component/upload-modal/upload-modal.module";
 import {ReactiveFormsModule} from "@angular/forms";
-import {DeleteModal} from "../../_component/DeleteModal/delete-modal";
-import {DeleteModalModule} from "../../_component/DeleteModal/delete-modal.module";
-import {EditModalModule} from "../../_component/EditModal/edit-modal.module";
-import {AccessModalModule} from "../../_component/AccessModal/access-modal.module";
+import {DeleteModal} from "../../_component/delete-modal/delete-modal";
+import {DeleteModalModule} from "../../_component/delete-modal/delete-modal.module";
+import {EditModalModule} from "../../_component/edit-modal/edit-modal.module";
+import {AccessModalModule} from "../../_component/access-modal/access-modal.module";
+import { PollsComponent } from './polls/polls.component';
+import {PollsModule} from "./polls/polls.module";
+import {TableModule} from "./table/table.module";
 
 
 const routes:Routes=[
   {
     path:'',
-    component:AdminComponent
+    component:AdminComponent,
   }
 ]
 @NgModule({
@@ -32,7 +35,7 @@ const routes:Routes=[
     AccessModalModule,
     DeleteModalModule,
     EditModalModule,
-
+    TableModule
   ],
   exports:[
     RouterModule

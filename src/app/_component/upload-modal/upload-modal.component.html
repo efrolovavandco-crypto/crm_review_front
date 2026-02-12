@@ -1,0 +1,37 @@
+<div class="modal-header bg-secondary text-white">
+  <h5 class="modal-title">Выгрузка пользователей</h5>
+  <button type="button" class="btn-close btn-close-white" (click)="activeModal.dismiss()"></button>
+</div>
+<form [formGroup]="uploadFormGroup" (ngSubmit)="submit()">
+  <div class="modal-body">
+    <p>Выберите необходимые поля:</p>
+    <div class="mb-4">
+      <div class="form-check" *ngFor="let column of columns; let i=index">
+        <input class="form-check-input" type="checkbox" formArrayName="selectedColumns" [value]="column.value" (change)="onCheckboxChange($event)">
+        <label class="form-check-label">{{column.name}}</label>
+      </div>
+    </div>
+<!--    <p>{{ uploadFormGroup.value | json }}</p>-->
+    <p>Выберите формат выгрузки:</p>
+    <div class="d-flex gap-3 mb-3">
+      <button type="button"
+              class="btn "
+              [class.btn-secondary]="selectedFormat === 'PDF'"
+              [class.btn-outline-secondary]="selectedFormat !== 'PDF'"
+              (click)="onFormatChange('PDF')">
+        PDF
+      </button>
+      <button type="button"
+              class="btn"
+              [class.btn-secondary]="selectedFormat === 'HTML'"
+              [class.btn-outline-secondary]="selectedFormat !== 'HTML'"
+              (click)="onFormatChange('HTML')">
+        HTML
+      </button>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-secondary" (click)="activeModal.dismiss()">Отмена</button>
+    <button type="submit" class="btn btn-danger">Начать загрузку</button>
+  </div>
+</form>

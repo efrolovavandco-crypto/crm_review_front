@@ -22,6 +22,11 @@ const routes: Routes = [
     path: 'user',
     loadChildren: () => import('./pages/user/user.module').then(m => m.UserModule)
   },
+  {
+    path:'polls',
+    loadChildren: () => import('./pages/admin/polls/polls.module').then(m => m.PollsModule)}
+
+
   // {path:'', redirectTo:'auth', pathMatch:"full"},
   // {
   //   path:'',

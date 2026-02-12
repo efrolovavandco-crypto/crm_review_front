@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, OnDestroy, OnInit} from '@angular/core';
 import {
   AbstractControl,
   FormBuilder,
@@ -10,6 +10,10 @@ import {
 } from "@angular/forms";
 import { AuthenticationService } from "../_services/authentication-service";
 import { Router } from "@angular/router";
+import {ToastrService} from "ngx-toastr";
+import {Subscription} from "rxjs";
+
+
 export function usernameValidator(): ValidatorFn {
   return (control: AbstractControl): ValidationErrors | null => {
     if (!control.value) {
@@ -25,27 +29,44 @@ export function usernameValidator(): ValidatorFn {
     };
   };
 }
+
+export function passwordValidator():ValidatorFn{
+  return (control:AbstractControl): ValidationErrors | null =>{
+    const value = control.value;
+    if (!value){
+      return null
+    }
+    const passRegex = /^[A-Za-z0-9 ]+$/;
+    const isValid = passRegex.test(value);
+    return isValid ? null :{
+      passwordValid:true,
+      message:'Пароль должен содержать только цифры и английские буквы'
+    }
+  }
+}
 @Component({
   selector: 'app-auth',
   templateUrl: './auth.component.html',
   styleUrls: ['./auth.component.css']
 })
-export class AuthComponent implements OnInit {
+export class AuthComponent implements OnInit, OnDestroy {
   loading: boolean = false;
   error: string = '';
   authForm!: FormGroup;
-
+  subscription = new Subscription();
   constructor(
     private fb: FormBuilder,
     private router: Router,
-    private authenticationService: AuthenticationService
-  ) {}
+    private authenticationService: AuthenticationService,
+    private toastrService: ToastrService,
+) {}
 
   ngOnInit() {
     this.authForm = this.fb.group({
-      username: ['', [Validators.required,usernameValidator()]],
-      password: ['', Validators.required]
+      username: ['', [Validators.required, usernameValidator()]],
+      password: ['', [Validators.required, passwordValidator()]]
     });
+    console.log(this.authForm)
   }
   get f() {
     return this.authForm.controls;
@@ -62,16 +83,12 @@ export class AuthComponent implements OnInit {
   onSubmit() {
     this.error = '';
     if (this.authForm.invalid) {
-      Object.keys(this.f).forEach(key => {
-        const control = this.f[key];
-        control.markAsTouched();
-      });
+      this.authForm.markAllAsTouched();
       return;
     }
 
     this.loading = true;
-
-    this.authenticationService.login(
+    this.subscription.add(this.authenticationService.login(
       this.authForm.value.username,
       this.authForm.value.password
     ).subscribe({
@@ -81,10 +98,17 @@ export class AuthComponent implements OnInit {
         if (!user || !user.role) return;
 
         this.redirectByRole(user.role);
+        console.log('подписка')
       },
       error: (error: any) => {
-        console.error(error);
+        this.toastrService.error('Неправильные логин или пароль', 'Ошибка входа:');
+        this.loading = false;
       }
-    });
+    }));
+  }
+
+  ngOnDestroy() {
+    this.subscription.unsubscribe()
+    console.log('отписка')
   }
 }

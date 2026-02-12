@@ -8,8 +8,10 @@ import {User} from "../../_interface/user";
 import {Router} from "@angular/router";
 import {ExportService} from "../../_services/export-service";
 import {finalize} from "rxjs";
-import {CreateModal} from "../../_component/CreateModal/create-modal";
-import {UploadModalComponent} from "../../_component/UploadModal/upload-modal.component";
+import {CreateModal} from "../../_component/create-modal/create-modal";
+import {UploadModalComponent} from "../../_component/upload-modal/upload-modal.component";
+import {DeleteModal} from "../../_component/delete-modal/delete-modal";
+import {NgbModal} from "@ng-bootstrap/ng-bootstrap";
 
 @Component({
   selector: 'app-admin',
@@ -21,22 +23,6 @@ export class AdminComponent {
   users: User[] = [];
   isLoading = true;
 
-  editForm!: FormGroup;
-  addForm!: FormGroup;
-  deleteForm!: FormGroup;
-  downloadForm!: FormGroup;
-  accessForm!: FormGroup;
-
-  showEditModal = false;
-  showAddModal = false;
-  showAccessModal = false;
-  showDeleteModal = false;
-  showDownloadModal = false;
-
-  editingUser: User | null = null;
-  deletingUser: User | null = null;
-  accessUser: User | null = null;
-
   positions = [
     { value: 'loader', label: 'Грузчик' },
     { value: 'courier', label: 'Курьер' },
@@ -45,12 +31,9 @@ export class AdminComponent {
   ];
 
   constructor(
-    private fb: FormBuilder,
-    private userService: UserService,
     private authService: AuthenticationService,
     private router: Router,
-    private exportService: ExportService,
-    private cdr: ChangeDetectorRef
+    private modalService: NgbModal,
   ) {}
 
 
@@ -58,25 +41,22 @@ export class AdminComponent {
     this.authService.logout();
     this.router.navigate(['/auth']);
   }
-  @ViewChild(CreateModal) modalCreate!: CreateModal;
-  @ViewChild(UploadModalComponent) modalUpload!: UploadModalComponent;
+
   openCreateModal() {
-    this.modalCreate.open();
+    const modalOptions={
+      backdrop:'static' as const,
+      centered:true,
+    };
+    const modalRef = this.modalService.open(CreateModal,modalOptions)
   }
   openUploadModal(){
-    this.modalUpload.open()
+    const modalOptions={
+      backdrop:'static' as const,
+      centered:true
+    };
+    const modalRef = this.modalService.open(UploadModalComponent,modalOptions)
   }
-  loadUsers() {
-    this.isLoading = true;
-    this.userService.getAll().subscribe({
-      next: (users) => {
-        this.users = users.filter(user => user.role !== 'Admin');
-        this.isLoading = false;
-      },
-      error: (error) => {
-        console.error(error);
-        this.isLoading = false;
-      }
-    });
+  openPolls(){
+    this.router.navigate(['/polls'])
   }
 }

@@ -6,6 +6,8 @@ import {UserComponent} from "./user.component";
 
 import {ProfileModule} from "./profile/profile.module";
 import {EditProfileModule} from "../../_component/edit-profile/edit-profile.module";
+import { PollsUserComponent } from './polls-user/polls-user.component';
+import {PollsUserModule} from "./polls-user/polls-user.module";
 
 
 const routes:Routes=[
@@ -22,6 +24,7 @@ const routes:Routes=[
     CommonModule,
     ProfileModule,
     EditProfileModule,
+    PollsUserModule,
     RouterModule.forChild(routes)
   ],
   exports:[

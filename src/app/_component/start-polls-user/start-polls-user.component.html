@@ -1,0 +1,36 @@
+<form [formGroup]="userAnswer">
+    <div class="modal-header">
+      <h5>{{poll.title}}</h5>
+    </div>
+    <div class="modal-body" [formGroup]="currentQuestion">
+      <p>Вопрос {{ currentQuestionIndex + 1 }} из {{ questionsFormArray.length }}</p>
+      <p class="fw-bolder">{{ poll.questions[currentQuestionIndex].text }}
+      </p>
+      <div formArrayName="answers">
+        <div class="input-group mb-2" *ngFor="let answer of currentAnswers.controls; let i = index" [formGroupName]="i">
+          <div class="input-group-text">
+            <input type="checkbox" class="form-check-input" name="question" (change)="selectAnswer(i)">
+          </div>
+          <input class="form-control" formControlName="text" readonly>
+        </div>
+      </div>
+      <div *ngIf="!isAnswerSelected()" class="alert alert-danger mt-3">Выберите от одного варианта ответа</div>
+    </div>
+<div class="modal-footer">
+  <button type="button" class="btn btn-danger" (click)="activeModal.dismiss()">Выйти</button>
+  <button type="button" class="btn btn-success" (click)="nextQuestion()">{{ currentQuestionIndex === questionsFormArray.length - 1 ? 'Завершить' : 'Далее' }}</button>
+</div>
+</form>
+<style>
+  .form-control:focus {
+    color: var(--bs-body-color);
+    background-color: var(--bs-body-bg);
+    border-color: rgba(48, 44, 44, 0.17);
+    outline: 0;
+    box-shadow: none;
+    cursor: default;
+  }
+  .form-control{
+    cursor: default;
+  }
+</style>

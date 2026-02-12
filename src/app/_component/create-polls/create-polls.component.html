@@ -1,0 +1,78 @@
+<div class="modal-header">
+  <h5 class="modal-title">Создание опроса</h5>
+  <button type="button" class="btn-close" (click)="activeModal.dismiss()">
+  </button>
+</div>
+<div class="modal-body">
+  <form [formGroup]="CreatePollsForm">
+    <div>
+      <label class="form-label fw-bolder text-muted">Название опроса</label>
+      <input class="form-control" formControlName="title">
+      <div *ngIf="CreatePollsForm.get('title')?.invalid && CreatePollsForm.get('title')?.touched" class="alert alert-danger mt-3">
+        Название <strong>опроса</strong> обязательно
+      </div>
+    </div>
+    <br>
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <h6 class="form-label fw-bolder text-muted mb-0">Вопросы</h6>
+      <button type="button" class="btn btn-outline-primary" (click)="addQuestion()" >
+        Добавить вопрос +
+      </button>
+    </div>
+    <br>
+    <div formArrayName="questions">
+      <div *ngIf="questionsFormArray.length === 0" class="card mb-3">
+        <div class="card-body text-center py-4">
+          <p class="text-muted mb-0">Вы еще не добавили вопросов...</p>
+          <a class="btn btn-link mt-2" (click)="addQuestion()">
+            Добавить первый вопрос
+          </a>
+        </div>
+      </div>
+      <div *ngFor="let question of questionsFormArray.controls; let i = index" class="card mb-3">
+        <div class="card-header d-flex justify-content-between align-items-center">
+          <span class="fw-bolder">Вопрос {{i + 1}}</span>
+          <button type="button" class="btn btn-sm btn-outline-danger" (click)="removeQuestion(i)">
+            Удалить вопрос
+          </button>
+        </div>
+        <div class="card-body" [formGroupName]="i">
+          <div class="mb-3">
+            <label class="form-label fw-bolder text-muted">Текст вопроса</label>
+            <input class="form-control" formControlName="text">
+          </div>
+          <div *ngIf="question.get('text')?.invalid && question.get('text')?.touched" class="alert alert-danger mt-3">
+              Название <strong>вопроса</strong> обязательно
+          </div>
+          <div class="d-flex justify-content-between align-items-center mb-3">
+            <div>
+              <label class="form-label fw-bolder text-muted">Ответы</label>
+              <p class="form-text small">Выберите правильный ответ (можно указать несколько)</p>
+            </div>
+            <div>
+              <button type="button" class="btn btn-outline-primary" (click)="addAnswer(i)">
+                Добавить ответ +
+              </button>
+            </div>
+          </div>
+          <div formArrayName="answers">
+            <div *ngFor="let answer of getAnswersFormArray(i).controls; let j = index" class="input-group mb-2" [formGroupName]="j">
+              <div class="input-group-text">
+                <input class="form-check-input mt-0" type="checkbox" [checked]="answer.get('isCorrect')?.value" (click)="toggleCorrectAnswer(i,j)">
+              </div>
+              <input type="text" class="form-control" formControlName="text" placeholder="Введите текст ответа">
+              <button type="button" class="btn btn-outline-danger" [disabled]="getAnswersFormArray(i).length <= 1" (click)="deleteAnswer(i,j)">✕</button>
+            </div>
+          </div>
+          <div *ngIf="!hasCorrectAnswer(i)" class="alert alert-danger mt-3">
+            Необходимо выбрать <strong>хотя бы один</strong> правильный ответ
+          </div>
+        </div>
+      </div>
+    </div>
+  </form>
+</div>
+<div class="modal-footer">
+  <button type="button" class="btn btn-secondary" (click)="activeModal.dismiss()">Отмена</button>
+  <button type="button" class="btn btn-success" (click)="savePoll()">Сохранить</button>
+</div>

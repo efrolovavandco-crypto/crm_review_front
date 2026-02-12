@@ -5,13 +5,14 @@
   </div>
   <ul class="nav nav-tabs pt-4">
     <li class="nav-item">
-      <a class="nav-link active" aria-current="page">Профиль</a>
+      <a class="nav-link" [class.active]="activeTab === 'profile'" (click)="setActiveTab('profile')" style="cursor:pointer">Профиль</a>
     </li>
     <li class="nav-item">
-      <a class="nav-link disabled" href="#" tabindex="-1" aria-disabled="true">Опросы</a>
+      <a class="nav-link" [class.active]="activeTab === 'polls'" (click)="setActiveTab('polls')" style="cursor:pointer" tabindex="-1" >Опросы</a>
     </li>
   </ul>
 </div>
 
-<app-profile></app-profile>
 
+<app-profile *ngIf="activeTab === 'profile'"></app-profile>
+<app-polls-user *ngIf="activeTab === 'polls'"></app-polls-user>

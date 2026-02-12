@@ -23,7 +23,7 @@
         </thead>
         <tbody>
 
-        <tr *ngFor="let user of users; trackBy: trackById">
+        <tr *ngFor="let user of users">
           <td>{{ user.id}}</td>
           <td>{{ user.fullname || "Не указано" }}</td>
           <td>{{ user.phone || "Не указано"}}</td>
@@ -53,8 +53,6 @@
     </ng-template>
   </div>
 </div>
-<!--Моадльные окна которые в колонке действия-->
 
-<app-delete-modal></app-delete-modal>
-<app-edit-modal></app-edit-modal>
-<app-access-modal></app-access-modal>
+
+
