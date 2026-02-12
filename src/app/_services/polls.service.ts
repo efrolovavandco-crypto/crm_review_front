@@ -81,15 +81,15 @@ export class PollsService {
       `${this.apiUrl}/polls/${pollId}/responses`
     );
   }
-  submitPollResponse(response: PollResponse): Observable<any> {
+  submitPollResponse(response: PollResponse, userId: number): Observable<any> {
     return this.http.post(
-      `${this.apiUrl}/polls/${response.pollId}/responses`,
+      `${this.apiUrl}/polls/${response.pollId}/responses/user/${userId}`,
       response
     );
   }
   //Подтянуть связанные данные из таблицы response
-  getUserPollProgress(): Observable<UserPollProgress[]> {
-    return this.http.get<UserPollProgress[]>(`${this.apiUrl}/polls/user/progress`);
+  getUserPollProgress(userId: number): Observable<UserPollProgress[]> {
+    return this.http.get<UserPollProgress[]>(`${this.apiUrl}/polls/user/${userId}/progress`);
   }
 
   // Получить прогресс конкретного пользователя для конкретного опроса
@@ -99,7 +99,6 @@ export class PollsService {
     );
   }
 
-  // Проверить, может ли пользователь пройти опрос
   canUserTakePoll(pollId: number): Observable<{ canTake: boolean, reason?: string }> {
     return this.http.get<{ canTake: boolean, reason?: string }>(
       `${this.apiUrl}/polls/${pollId}/can-take`
@@ -118,7 +117,7 @@ export class PollsService {
         answers: question.answers?.map((answer, aIndex) => ({
           id: answer.id || undefined,
           text: answer.text,
-          is_correct: answer.isCorrect ? "1" : "0", //преобразование в инт
+          is_correct: answer.isCorrect ? "1" : "0", //преобразование в инт в интерфейсе true false
           order: aIndex
         })) || []
       })) || []

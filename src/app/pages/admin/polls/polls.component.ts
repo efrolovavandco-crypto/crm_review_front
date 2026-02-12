@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnDestroy, OnInit} from '@angular/core';
 import {Router} from "@angular/router";
 import {PollsService} from "../../../_services/polls.service";
 import {User} from "../../../_interface/user";
@@ -9,15 +9,17 @@ import {EditPollsComponent} from "../../../_component/edit-polls/edit-polls.comp
 import {PollsStatisticsComponent} from "../../../_component/polls-statistics/polls-statistics.component";
 import {DeletePollsComponent} from "../../../_component/delete-polls/delete-polls.component";
 import {CreatePollsComponent} from "../../../_component/create-polls/create-polls.component";
+import {Subscription} from "rxjs";
 
 @Component({
   selector: 'app-polls',
   templateUrl: './polls.component.html',
   styleUrls: ['./polls.component.css']
 })
-export class PollsComponent implements OnInit{
+export class PollsComponent implements OnInit, OnDestroy{
   polls: Poll[] = [];
   loading: boolean = true;
+  subscription = new Subscription;
   constructor(
     private modalService: NgbModal,
     private router: Router,
@@ -29,9 +31,10 @@ export class PollsComponent implements OnInit{
   }
 
   ngOnInit() {
-    this.pollsService.polls$.subscribe(polls => {
+    this.subscription.add(
+      this.pollsService.polls$.subscribe(polls => {
       this.polls = polls;
-    });
+    }));
     this.pollsService.getAll();
     this.loading=false;
   }
@@ -70,5 +73,8 @@ export class PollsComponent implements OnInit{
       size:'xl'
     };
     const modalRef = this.modalService.open(CreatePollsComponent, modalOptions)
+  }
+  ngOnDestroy() {
+    this.subscription.unsubscribe()
   }
 }

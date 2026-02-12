@@ -1,24 +1,22 @@
-import {Component, Input, OnInit} from '@angular/core';
-import {User} from "../../../_interface/user";
+import {Component, Input, OnDestroy, OnInit} from '@angular/core';
 import {Poll} from "../../../_interface/polls";
 import {PollsService} from "../../../_services/polls.service";
-import {EditPollsComponent} from "../../../_component/edit-polls/edit-polls.component";
 import {NgbModal} from "@ng-bootstrap/ng-bootstrap";
 import {StartPollsUserComponent} from "../../../_component/start-polls-user/start-polls-user.component";
-import {Router} from "@angular/router";
-import {RestartPollsUserComponent} from "../../../_component/restart-polls-user/restart-polls-user.component";
 import { AuthenticationService } from 'src/app/_services/authentication-service';
+import {Subscription} from "rxjs";
 
 @Component({
   selector: 'app-polls-user',
   templateUrl: './polls-user.component.html',
   styleUrls: ['./polls-user.component.css']
 })
-export class PollsUserComponent implements OnInit{
+export class PollsUserComponent implements OnInit, OnDestroy{
   polls: Poll[] = [];
   userPollProgress: any[] = [];
   isLoading = false;
   currentUser: any = null;
+  subscription = new Subscription;
   constructor(
     private pollsService: PollsService,
     private authService: AuthenticationService,
@@ -34,30 +32,32 @@ export class PollsUserComponent implements OnInit{
   }
   loadPolls() {
     this.isLoading = true;
-    this.pollsService.getAll().subscribe({
-      next: (polls) => {
-        this.polls = polls;
-        this.isLoading = false;
-        console.log(polls)
+    this.subscription.add(
+      this.pollsService.getAll().subscribe({
+        next: (polls) => {
+          this.polls = polls;
+          this.isLoading = false;
+          console.log(polls)
       },
-      error: (error) => {
-        console.error('Ошибка загрузки опросов:', error);
-        this.isLoading = false;
+        error: (error) => {
+          console.error('Ошибка загрузки опросов:', error);
+          this.isLoading = false;
       }
-    });
+    }));
   }
   loadUserPollProgress() {
     if (!this.currentUser) return;
 
-    this.pollsService.getUserPollProgress().subscribe({
-      next: (progress) => {
-        this.userPollProgress = progress;
-        console.log('прогресс:',progress)
-      },
-      error: (error) => {
-        console.error(error);
+    this.subscription.add(
+      this.pollsService.getUserPollProgress(this.currentUser.id).subscribe({
+        next: (progress) => {
+          this.userPollProgress = progress;
+          console.log('прогресс:',progress)
+        },
+        error: (error) => {
+          console.error(error);
       }
-    });
+    }));
   }
   isPollCompleted(pollId: number): boolean {
     if (!this.currentUser || !this.userPollProgress) return false;
@@ -87,16 +87,17 @@ export class PollsUserComponent implements OnInit{
     );
   }
   //Рестарт опроса
-  restartPoll(poll:Poll): any  {
-    this.pollsService.resetPollResponses(poll.id).subscribe({
-      next:()=>{
-        this.loadUserPollProgress();
+  restartPoll(poll:Poll) {
+    this.subscription.add(
+      this.pollsService.resetPollResponses(poll.id).subscribe({
+        next:()=>{
+          this.loadUserPollProgress();
       },
-      error:err => {
-        console.error(err);
-        console.log(poll, poll.id)
+        error:err => {
+          console.error(err);
+          console.log(poll, poll.id)
       }
-    })
+    }))
   }
 
   //подсказка
@@ -118,6 +119,7 @@ export class PollsUserComponent implements OnInit{
     return 'bg-secondary';
   }
 
-
-
+  ngOnDestroy() {
+    this.subscription.unsubscribe()
+  }
 }

@@ -1,22 +1,24 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, Input, OnDestroy, OnInit} from '@angular/core';
 import {Answer, Poll, PollResponse, Question, UserAnswer} from "../../_interface/polls";
 import {NgbActiveModal} from "@ng-bootstrap/ng-bootstrap";
 import {FormArray, FormBuilder, FormGroup, Validators} from "@angular/forms";
 import {PollsService} from "../../_services/polls.service";
 import { AuthenticationService } from 'src/app/_services/authentication-service';
+import {Subscription} from "rxjs";
 
 @Component({
   selector: 'app-start-polls-user',
   templateUrl: './start-polls-user.component.html',
   styleUrls: ['./start-polls-user.component.css']
 })
-export class StartPollsUserComponent implements OnInit {
+export class StartPollsUserComponent implements OnInit, OnDestroy {
 
   @Input() poll!: Poll;
   @Input() userId!: number;
   userAnswer!: FormGroup;
   currentQuestionIndex = 0;
   hasCompletedPoll = false;
+  subscription = new Subscription;
 
   constructor(
     public activeModal: NgbActiveModal,
@@ -49,38 +51,38 @@ export class StartPollsUserComponent implements OnInit {
   checkIfPollCompleted() {
     const currentUser = this.authService.userValue;
     if (currentUser) {
-      this.pollsService.getUserPollProgressForPoll(currentUser.id, this.poll.id)
-        .subscribe({
-          next: (progress) => {
-            this.hasCompletedPoll = progress.completed;
-            if (progress.completed) {
-              console.log(`Вы уже проходили этот опрос. Ваш результат: ${progress.score}%`);
+      this.subscription.add(
+        this.pollsService.getUserPollProgressForPoll(currentUser.id, this.poll.id)
+          .subscribe({
+            next: (progress) => {
+              this.hasCompletedPoll = progress.completed;
+              if (progress.completed) {
+                console.log(`${progress.score}`);
             }
           },
-          error: () => {
-            this.hasCompletedPoll = false;
+            error: () => {
+              this.hasCompletedPoll = false;
           }
-        });
+        }));
     }
   }
   finishPoll() {
     const currentUser = this.authService.userValue;
     if (!currentUser) {
-      console.error('Пользователь не авторизован');
       return;
     }
-
     const response = this.buildPollResponse();
     response.userId = currentUser.id;
-
-    this.pollsService.submitPollResponse(response).subscribe({
-      next: (result: any) => {
-        this.activeModal.close(true);
-      },
-      error: err => {
-        console.error('Ошибка отправки опроса', err);
+    this.subscription.add(
+      this.pollsService.submitPollResponse(response,response.userId).subscribe({
+        next: (result: any) => {
+          this.activeModal.close(true);
+          console.log(response)
+        },
+        error: err => {
+          console.error(err);
       }
-    });
+    }));
   }
   buildPollResponse(): PollResponse {
     const currentUser = this.authService.userValue;
@@ -131,7 +133,6 @@ export class StartPollsUserComponent implements OnInit {
   selectAnswer(answerIndex: number) {
     this.currentAnswers.controls.forEach((ctrl, i) => {
       ctrl.get('isCorrect')?.setValue(i === answerIndex);
-      console.log('ctrl', ctrl)
     });
   }
 
@@ -152,9 +153,7 @@ export class StartPollsUserComponent implements OnInit {
       this.finishPoll();
     }
   }
-
-
-
-
-
+  ngOnDestroy() {
+    this.subscription.unsubscribe()
+  }
 }
